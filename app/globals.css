@@ -1,0 +1,477 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  /* Inter font for landing page typography */
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+
+  /* Christmas donation landing page color tokens */
+  --color-primary: #c41e3a;
+  --color-primary-dark: #991b1b;
+  --color-secondary: #f59e0b;
+  --color-secondary-light: #ffd700;
+  --color-background: #f9fafb;
+  --color-foreground: #111827;
+  --radius: 0.75rem;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Landing page animations */
+@keyframes headerPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.24);
+  }
+}
+
+.header-timer-pulse {
+  animation: headerPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pingSlow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: pingSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes giftsPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.gifts-animate {
+  animation: giftsPulse 0.42s ease-out;
+  color: #f59e0b !important;
+}
+
+.views-bump {
+  color: #f59e0b;
+  transform: scale(1.1);
+  transition: transform 0.4s ease-out, color 0.4s ease-out;
+}
+
+.children-bump {
+  color: #f59e0b !important;
+  transform: scale(1.12);
+  transition: transform 0.45s ease-out, color 0.45s ease-out;
+}
+
+.count-bump {
+  color: #f59e0b;
+  transform: scale(1.08);
+  transition: transform 0.3s ease-out, color 0.3s ease-out;
+}
+
+@keyframes customCtaPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 18px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 26px rgba(245, 158, 11, 0.6);
+  }
+}
+
+.custom-cta-pulse:not(:disabled) {
+  animation: customCtaPulse 2s ease-in-out infinite;
+}
+
+/* Enhanced CTA button animations for better attention and conversion */
+
+/* Base CTA hover animation - applied to all main donation buttons */
+.btn-cta {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, filter 0.3s ease-out;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  filter: brightness(1.05);
+}
+
+.btn-cta:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+/* Soft pulse animation for featured CTAs (R$ 49,90 card and sticky CTA) */
+@keyframes ctaSoftPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.45);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.65);
+  }
+}
+
+/* Featured card button pulse (R$ 49,90) */
+.cta-pulse-featured {
+  animation: ctaSoftPulse 2.4s ease-in-out infinite;
+}
+
+.cta-pulse-featured:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.75);
+}
+
+/* Sticky CTA pulse */
+.cta-pulse-sticky {
+  animation: ctaSoftPulse 2.8s ease-in-out infinite;
+}
+
+.cta-pulse-sticky:hover {
+  animation-play-state: paused;
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.6);
+}
+
+/* Slide-up fade-in animation when buttons enter viewport */
+@keyframes ctaSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cta-slide-in {
+  animation: ctaSlideUp 0.4s ease-out 0.1s both;
+}
+
+/* Mobile optimizations - reduce scale effects on small screens */
+@media (max-width: 640px) {
+  .cta-pulse-featured,
+  .cta-pulse-sticky {
+    animation-duration: 3.2s;
+  }
+
+  .cta-pulse-featured:hover,
+  .cta-pulse-sticky:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  .btn-cta:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+}
+
+/* Fade in scroll animation */
+.fade-in-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Button hover effects */
+.btn-primary {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, filter 0.3s ease-out;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.05);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Added upsell button pulse animation for thank you page */
+@keyframes upsellPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(196, 30, 58, 0.55);
+  }
+}
+
+.upsell-pulse {
+  animation: upsellPulse 2.2s ease-in-out infinite;
+}
+
+.upsell-pulse:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.7);
+}
+
+/* Added bounce animation for success checkmark */
+@keyframes bounceSlow {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2s ease-in-out infinite;
+}
+
+/* Adding soft pulse animation for all CTA buttons */
+@keyframes btnSoftPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.55);
+  }
+}
+
+.btn-pulse {
+  animation: btnSoftPulse 2.4s ease-in-out infinite;
+}
+
+.btn-pulse:hover {
+  animation-play-state: paused;
+}
+
+/* Slightly stronger pulse for the featured R$ 49,90 card */
+@keyframes btnFeaturedPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 7px 24px rgba(245, 158, 11, 0.65);
+  }
+}
+
+.btn-pulse-featured {
+  animation: btnFeaturedPulse 2.2s ease-in-out infinite;
+}
+
+.btn-pulse-featured:hover {
+  animation-play-state: paused;
+}
+
+/* Mobile optimization - slower pulse on small screens */
+@media (max-width: 400px) {
+  .btn-pulse,
+  .btn-pulse-featured {
+    animation-duration: 3s;
+  }
+}
+
+/* Social proof popup animations */
+/* Updated social proof popup animations to work on both mobile and desktop */
+/* Ensure popups work consistently across all screen sizes */
+@keyframes socialPopupIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes socialPopupOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.social-popup {
+  animation: socialPopupIn 0.4s ease-out forwards;
+  pointer-events: auto;
+}
+
+.social-popup.hide {
+  animation: socialPopupOut 0.4s ease-out forwards;
+}
+
+/* Responsive adjustments for popup positioning */
+/* Mobile: ensure popups don't overlap with sticky CTA */
+@media (max-width: 640px) {
+  #social-proof-popups {
+    bottom: 100px !important; /* Move higher to avoid sticky CTA */
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    width: calc(100% - 1rem) !important;
+    max-width: 320px !important;
+  }
+}

@@ -1,40 +1,116 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface CheckoutModalProps {
   open: boolean
   onClose: () => void
   amount: { display: string; value: number } | null
+  source?: string
+  onPaymentConfirmed?: () => void
+  skipForm?: boolean
+  preFillData?: {
+    name: string
+    email?: string
+    phone?: string
+  }
 }
 
-export default function CheckoutModal({ open, onClose, amount }: CheckoutModalProps) {
+export default function CheckoutModal({
+  open,
+  onClose,
+  amount,
+  source,
+  onPaymentConfirmed,
+  skipForm = false,
+  preFillData,
+}: CheckoutModalProps) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [nameError, setNameError] = useState("")
   const [showPaymentPending, setShowPaymentPending] = useState(false)
-  const [pixCode, setPixCode] = useState("")
+  const [pixData, setPixData] = useState<{
+    qrCodeImage: string | null
+    copyAndPaste: string | null
+    payUrl: string | null
+  } | null>(null)
+  const [donationId, setDonationId] = useState<string | null>(null)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (open && skipForm && preFillData && amount) {
+      console.log("[v0] Skip form mode - generating payment directly with pre-filled data")
+      handleGeneratePayment(preFillData.name, preFillData.email, preFillData.phone)
+    }
+  }, [open, skipForm, preFillData, amount])
+
+  useEffect(() => {
+    if (showPaymentPending && donationId && !skipForm && source !== "upsell_thankyou") {
+      const donorData = { name, email, phone }
+      console.log("[v0] Storing donor data in localStorage:", donorData)
+      localStorage.setItem("lastDonorData", JSON.stringify(donorData))
+    }
+  }, [showPaymentPending, donationId, name, email, phone, skipForm, source])
 
   if (!open || !amount) return null
 
-  const handleGeneratePayment = async () => {
-    if (!name.trim()) {
+  const handleGeneratePayment = async (donorName?: string, donorEmail?: string, donorPhone?: string) => {
+    const finalName = donorName || name
+    const finalEmail = donorEmail || email
+    const finalPhone = donorPhone || phone
+
+    if (!finalName.trim()) {
       setNameError("O nome é obrigatório para gerar o pagamento.")
       return
     }
 
     setNameError("")
+    setError("")
     setIsLoading(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch("/api/donations/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: finalName.trim(),
+          email: finalEmail.trim() || undefined,
+          phone: finalPhone.replace(/\D/g, "") || undefined,
+          amount: amount.value,
+          source: source || "main",
+        }),
+      })
 
-    const mockPixCode = "00020126580014br.gov.bcb.pix0136" + Math.random().toString(36).substring(2, 15)
-    setPixCode(mockPixCode)
+      const data = await response.json()
 
-    setIsLoading(false)
-    setShowPaymentPending(true)
+      if (!response.ok || !data.success) {
+        const errorMessage = data.message || data.error || "Erro ao gerar pagamento"
+        if (errorMessage.includes("Domínio não autorizado") || errorMessage.includes("Hostname não identificado")) {
+          setError(
+            "⚠️ Configuração pendente: O domínio ainda não foi autorizado no dashboard da UmbrellaPag. Consulte o arquivo CONFIGURAR_DOMINIO_UMBRELLAPAG.md para instruções detalhadas.",
+          )
+        } else {
+          setError(errorMessage)
+        }
+        setIsLoading(false)
+        return
+      }
+
+      console.log("[v0] Payment created successfully:", data)
+
+      setDonationId(data.donationId)
+      setPixData(data.pix)
+      setShowPaymentPending(true)
+    } catch (err: any) {
+      console.error("[v0] Error generating payment:", err.message)
+      setError(err.message || "Erro ao gerar pagamento. Tente novamente.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handlePhoneChange = (value: string) => {
@@ -53,13 +129,35 @@ export default function CheckoutModal({ open, onClose, amount }: CheckoutModalPr
     setPhone(formatted)
   }
 
-  const handleCopyPixCode = () => {
-    navigator.clipboard.writeText(pixCode)
-    alert("Código Pix copiado! Cole no app do seu banco.")
+  if (showPaymentPending && pixData && donationId) {
+    return (
+      <PaymentPendingScreen
+        amount={amount}
+        pixData={pixData}
+        donationId={donationId}
+        onClose={onClose}
+        source={source}
+        onPaymentConfirmed={onPaymentConfirmed}
+      />
+    )
   }
 
-  if (showPaymentPending) {
-    return <PaymentPendingScreen amount={amount} pixCode={pixCode} onCopyCode={handleCopyPixCode} />
+  if (skipForm && isLoading) {
+    return (
+      <div className="fixed inset-0 z-[20000] flex items-center justify-center px-4 bg-black/75 backdrop-blur-sm">
+        <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl px-8 py-10 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 border-4 border-[#C41E3A] border-t-transparent rounded-full animate-spin"></div>
+          <h3 className="text-[#C41E3A] text-[18px] md:text-[20px] font-bold mb-2">Gerando seu pagamento...</h3>
+          <p className="text-[#6B7280] text-[14px] md:text-[15px]">
+            Aguarde um instante enquanto preparamos o Pix para você.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (skipForm) {
+    return null
   }
 
   return (
@@ -81,6 +179,12 @@ export default function CheckoutModal({ open, onClose, amount }: CheckoutModalPr
         <p className="text-[#374151] text-[14px] md:text-[15px] text-center mb-4">
           Preencha seus dados para gerar o pagamento. É rápido e seguro.
         </p>
+
+        {error && (
+          <div className="mb-4 bg-[#FEE2E2] border border-[#DC2626] rounded-lg px-3 py-2">
+            <p className="text-[#DC2626] text-[13px] md:text-[14px] font-medium">{error}</p>
+          </div>
+        )}
 
         <form
           className="space-y-3"
@@ -165,64 +269,144 @@ export default function CheckoutModal({ open, onClose, amount }: CheckoutModalPr
 
 function PaymentPendingScreen({
   amount,
-  pixCode,
-  onCopyCode,
+  pixData,
+  donationId,
+  onClose,
+  source,
+  onPaymentConfirmed,
 }: {
   amount: { display: string; value: number }
-  pixCode: string
-  onCopyCode: () => void
+  pixData: {
+    qrCodeImage: string | null
+    copyAndPaste: string | null
+    payUrl: string | null
+  }
+  donationId: string
+  onClose: () => void
+  source?: string
+  onPaymentConfirmed?: () => void
 }) {
+  const [isChecking, setIsChecking] = useState(false)
+
+  useEffect(() => {
+    let pollInterval: NodeJS.Timeout
+
+    const checkPaymentStatus = async () => {
+      if (isChecking) return
+
+      setIsChecking(true)
+      try {
+        const response = await fetch(`/api/donations/status/${donationId}`)
+        const data = await response.json()
+
+        console.log("[v0] Payment status check:", data)
+
+        if (data.success && data.status === "PAID") {
+          console.log("[v0] Payment confirmed!")
+          clearInterval(pollInterval)
+
+          if (source === "upsell_thankyou") {
+            console.log("[v0] Upsell payment confirmed, triggering callback")
+            if (onPaymentConfirmed) {
+              onPaymentConfirmed()
+            }
+          } else {
+            console.log("[v0] Main donation confirmed, redirecting to thank you page")
+            window.location.href = "/obrigado"
+          }
+        } else if (data.status === "REFUSED" || data.status === "EXPIRED") {
+          console.log("[v0] Payment failed:", data.status)
+          clearInterval(pollInterval)
+          alert("Seu pagamento não foi confirmado. Se quiser, tente gerar um novo Pix.")
+          onClose()
+        }
+      } catch (error) {
+        console.error("[v0] Error checking payment status:", error)
+      } finally {
+        setIsChecking(false)
+      }
+    }
+
+    const startDelay = setTimeout(() => {
+      checkPaymentStatus()
+      pollInterval = setInterval(checkPaymentStatus, 10000)
+    }, 5000)
+
+    return () => {
+      clearTimeout(startDelay)
+      if (pollInterval) clearInterval(pollInterval)
+    }
+  }, [donationId, onClose, isChecking, source, onPaymentConfirmed])
+
+  const handleCopyPixCode = () => {
+    if (pixData.copyAndPaste) {
+      navigator.clipboard.writeText(pixData.copyAndPaste)
+      alert("Código Pix copiado! Cole no app do seu banco.")
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-[20000] flex items-center justify-center px-4 bg-black/80 backdrop-blur-sm">
       <div className="relative w-full max-w-md md:max-w-lg bg-white rounded-2xl shadow-2xl px-5 py-6 md:px-7 md:py-7 max-h-[90vh] overflow-y-auto">
         <div className="bg-[#FEE2E2] border-2 border-[#DC2626] rounded-xl px-4 py-4 mb-5">
           <h3 className="text-[#991B1B] text-[16px] md:text-[18px] font-extrabold mb-2 text-center">
-            Aguarde! Falta só a confirmação do seu pagamento...
+            Não feche esta página antes de concluir o pagamento!
           </h3>
-          <p className="text-[#7F1D1D] text-[13px] md:text-[14px] leading-relaxed mb-2 text-center">
-            <strong>Não feche esta página agora!</strong> É importante concluir o pagamento para garantir que o presente
-            chegue até a criança.
-          </p>
           <p className="text-[#7F1D1D] text-[13px] md:text-[14px] leading-relaxed text-center">
-            Copie o código Pix ou aponte sua câmera para o QR Code abaixo. O presente está quase nas mãos dela!
+            Assim que o Pix for confirmado, seu presente entra na fila de entrega e você será redirecionado
+            automaticamente.
           </p>
         </div>
 
-        <div className="text-center mb-5">
-          <p className="text-[#6B7280] text-[13px] md:text-[14px] mb-1">Valor da doação</p>
-          <p className="text-[#C41E3A] text-[32px] md:text-[38px] font-extrabold">R$ {amount.display}</p>
-        </div>
-
-        <div className="bg-white border-2 border-[#E5E7EB] rounded-xl p-4 mb-4 flex items-center justify-center">
-          <div className="w-48 h-48 bg-[#F3F4F6] rounded-lg flex items-center justify-center">
-            <p className="text-[#9CA3AF] text-[12px] text-center px-4">
-              QR Code Pix
-              <br />
-              (simulação)
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-[13px] md:text-[14px] font-medium text-[#374151] mb-1">
-            Código Pix Copia e Cola
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={pixCode}
-              readOnly
-              className="flex-1 h-[46px] md:h-[48px] px-3 md:px-4 rounded-lg border-2 border-[#E5E7EB] text-[12px] md:text-[13px] text-[#111827] bg-[#F9FAFB]"
+        {pixData.qrCodeImage && (
+          <div className="bg-white border-2 border-[#E5E7EB] rounded-xl p-4 mb-4 flex items-center justify-center">
+            <img
+              src={
+                pixData.qrCodeImage.startsWith("data:")
+                  ? pixData.qrCodeImage
+                  : `data:image/png;base64,${pixData.qrCodeImage}`
+              }
+              alt="QR Code Pix"
+              className="w-48 h-48 rounded-lg"
             />
-            <button
-              type="button"
-              onClick={onCopyCode}
-              className="px-4 h-[46px] md:h-[48px] rounded-lg bg-[#10B981] text-white font-semibold text-[13px] md:text-[14px] hover:bg-[#059669] transition-colors"
-            >
-              Copiar
-            </button>
           </div>
-        </div>
+        )}
+
+        {pixData.copyAndPaste && (
+          <div className="mb-4">
+            <label className="block text-[13px] md:text-[14px] font-medium text-[#374151] mb-1">
+              Copie o código Pix abaixo ou aponte a câmera do seu banco para o QR Code:
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={pixData.copyAndPaste}
+                readOnly
+                className="flex-1 h-[46px] md:h-[48px] px-3 md:px-4 rounded-lg border-2 border-[#E5E7EB] text-[12px] md:text-[13px] text-[#111827] bg-[#F9FAFB]"
+              />
+              <button
+                type="button"
+                onClick={handleCopyPixCode}
+                className="px-4 h-[46px] md:h-[48px] rounded-lg bg-[#10B981] text-white font-semibold text-[13px] md:text-[14px] hover:bg-[#059669] transition-colors"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {pixData.payUrl && (
+          <div className="mb-4">
+            <a
+              href={pixData.payUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full h-[46px] rounded-lg bg-[#3B82F6] text-white font-semibold text-[14px] flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+            >
+              Abrir página de pagamento
+            </a>
+          </div>
+        )}
 
         <SocialProofTicker />
 
@@ -237,19 +421,11 @@ function PaymentPendingScreen({
             <li>Confirme o pagamento de R$ {amount.display}</li>
           </ol>
           <p className="text-[#C41E3A] text-[12px] md:text-[13px] font-semibold mt-3 text-center">
-            Assim que confirmar, você será redirecionado automaticamente.
+            {source === "upsell_thankyou"
+              ? "Assim que confirmar, você receberá uma confirmação visual."
+              : "Assim que confirmar, você será redirecionado automaticamente."}
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            window.location.href = "/obrigado"
-          }}
-          className="mt-4 w-full h-[44px] rounded-lg bg-[#6B7280] text-white font-semibold text-[13px] opacity-50 hover:opacity-70 transition-opacity"
-        >
-          [TESTE] Simular pagamento confirmado
-        </button>
       </div>
     </div>
   )
@@ -265,12 +441,12 @@ function SocialProofTicker() {
     "Ana de Curitiba confirmou há 3 min.",
   ]
 
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentProof((prev) => (prev + 1) % proofs.length)
     }, 10000)
     return () => clearInterval(interval)
-  })
+  }, [])
 
   return (
     <div className="bg-[#ECFDF5] border border-[#10B981] rounded-lg px-3 py-2 text-center">

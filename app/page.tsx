@@ -270,7 +270,7 @@ export default function Home() {
                 bem" quando perguntam o que ela vai ganhar. Ela finge que não se importa. Mas, por dentro, ela só queria
                 ser lembrada.
               </p>
-              <p className="text-[#111827] text-[15px] md:text-[17px] leading-relaxed font-semibold">
+              <p className="text-[#111827] text-[15px] md:text-[16px] leading-relaxed font-semibold">
                 A Operação Papai Noel existe justamente para isso:{" "}
                 <span className="text-[#C41E3A] font-bold">
                   colocar um presente real nas mãos de crianças como a Maria
@@ -339,13 +339,16 @@ export default function Home() {
             ].map((src, index) => (
               <figure
                 key={index}
-                className="relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 bg-[#111827]"
+                className="relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 bg-[#F3F4F6]"
               >
                 <img
                   src={src || "/placeholder.svg"}
                   alt="Crianças recebendo presentes de Natal"
                   className="w-full h-full object-cover transform hover:scale-[1.03] transition-transform duration-300 opacity-95 hover:opacity-100"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = "/crian-a-feliz-natal.jpg"
+                  }}
                 />
               </figure>
             ))}
@@ -525,36 +528,31 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Faixa de LOGOS DE MÍDIA */}
+          {/* Faixa de LOGOS DE MÍDIA - Apenas texto estilizado */}
           <div className="bg-white border-t border-[#E5E7EB] rounded-xl px-4 py-4 md:py-5 mb-6">
             <p className="text-center text-[#6B7280] text-[13px] md:text-[14px] font-medium mb-4">
-              Já fomos destaque em grandes veículos de comunicação
+              Destaque em grandes veículos de comunicação
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-              <img
-                src="/globonews-logo.jpg"
-                alt="GloboNews"
-                className="h-10 md:h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
-                loading="lazy"
-              />
-              <img
-                src="/g1-logo.jpg"
-                alt="G1"
-                className="h-10 md:h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
-                loading="lazy"
-              />
-              <img
-                src="/revista-veja-logo.jpg"
-                alt="Revista Veja"
-                className="h-10 md:h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
-                loading="lazy"
-              />
-              <img
-                src="/uol-logo.jpg"
-                alt="UOL"
-                className="h-10 md:h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
-                loading="lazy"
-              />
+              {/* GloboNews - vermelho escuro com fundo branco */}
+              <span className="px-3 py-1.5 rounded-md bg-white border border-[#E5E7EB] text-[#C8102E] text-sm md:text-base font-extrabold tracking-tight shadow-sm">
+                GloboNews
+              </span>
+
+              {/* G1 - vermelho característico */}
+              <span className="px-3 py-1.5 rounded-md border border-[#E5E7EB] text-[#C4170C] text-xl md:text-2xl font-black tracking-tighter">
+                G1
+              </span>
+
+              {/* Veja - azul escuro, maiúsculas */}
+              <span className="px-3 py-1.5 rounded-md border border-[#E5E7EB] text-[#003366] text-sm md:text-base font-extrabold tracking-wide uppercase">
+                Veja
+              </span>
+
+              {/* R7 - azul */}
+              <span className="px-3 py-1.5 rounded-md border border-[#E5E7EB] text-[#0071CE] text-xl md:text-2xl font-bold tracking-tight">
+                R7
+              </span>
             </div>
           </div>
 
@@ -564,9 +562,9 @@ export default function Home() {
             <div className="bg-white border border-[#E5E7EB] rounded-xl px-4 py-4 shadow-md hover:shadow-lg transition-shadow">
               <div className="flex items-start gap-3 mb-3">
                 <img
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=faces"
-                  alt="Ana Paula"
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0"
+                  src="/images/depoimentos/depoimento-1.jpg"
+                  alt="Ana Paula - Foto de pessoa real dando depoimento"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0 bg-[#F3F4F6]"
                   loading="lazy"
                 />
                 <div>
@@ -583,9 +581,9 @@ export default function Home() {
             <div className="bg-white border border-[#E5E7EB] rounded-xl px-4 py-4 shadow-md hover:shadow-lg transition-shadow">
               <div className="flex items-start gap-3 mb-3">
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces"
-                  alt="João Carlos"
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0"
+                  src="/images/depoimentos/depoimento-2.jpg"
+                  alt="João Carlos - Foto de pessoa real dando depoimento"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0 bg-[#F3F4F6]"
                   loading="lazy"
                 />
                 <div>
@@ -602,9 +600,9 @@ export default function Home() {
             <div className="bg-white border border-[#E5E7EB] rounded-xl px-4 py-4 shadow-md hover:shadow-lg transition-shadow md:col-span-2 lg:col-span-1">
               <div className="flex items-start gap-3 mb-3">
                 <img
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=faces"
-                  alt="Maria Silva"
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0"
+                  src="/images/depoimentos/depoimento-3.jpg"
+                  alt="Maria Silva - Foto de pessoa real dando depoimento"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#F59E0B] flex-shrink-0 bg-[#F3F4F6]"
                   loading="lazy"
                 />
                 <div>
@@ -811,7 +809,7 @@ export default function Home() {
       ></div>
 
       {/* CHECKOUT MODAL */}
-      <CheckoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} amount={selectedAmount} />
+      <CheckoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} amount={selectedAmount} source="main" />
     </>
   )
 }

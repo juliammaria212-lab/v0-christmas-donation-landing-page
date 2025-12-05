@@ -174,7 +174,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-[#111827] relative aspect-video fade-in-scroll">
           <iframe
             className="w-full h-full"
-            src="https://www.youtube.com/embed/ZJzmdhhZuLw?si=4yGEn8VyZIa-uNBU"
+            src="https://www.youtube.com/embed/x9ipplkdTak?si=Y1Fhn2MydH3X5AQJ"
             title="Operação Papai Noel - VSL"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen

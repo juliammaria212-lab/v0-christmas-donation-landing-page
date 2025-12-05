@@ -1,139 +1,84 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import SnowEffect from "@/components/snow-effect"
-import CheckoutModal from "@/components/checkout-modal"
 import DonationCard from "@/components/donation-card"
-import FaqAccordion from "@/components/faq-accordion"
+import SnowEffect from "@/components/snow-effect"
+
+const donationOptions = [
+  {
+    label: "A ESPERANÇA MÍNIMA",
+    title: "A Esperança Mínima",
+    amount: "19,90",
+    icon: "🧸",
+    subtitle: "Ajuda na logística e garante a esperança de uma criança.",
+    priceKey: "19.90",
+    badge: null,
+    microCopyPrefix: "🔥",
+    featured: false,
+    href: "https://app.umbrellapag.com/link/0f8ec114-5b13-4a46-9470-cdee896b5475",
+  },
+  {
+    label: "O PRESENTE GARANTIDO",
+    title: "O Presente Garantido",
+    amount: "29,90",
+    icon: "🎈",
+    subtitle: "Garante um presente simples, mas completo.",
+    priceKey: "29.90",
+    badge: null,
+    microCopyPrefix: "✨",
+    featured: false,
+    href: "https://app.umbrellapag.com/link/97911ebe-9cf7-4fda-b281-4c6f6fb039c4",
+  },
+  {
+    label: "O PACOTE MÁGICO",
+    title: "O Pacote Mágico",
+    amount: "49,90",
+    icon: "🎁",
+    subtitle: "O presente completo: brinquedo + logística + entrega garantida.",
+    priceKey: "49.90",
+    badge: "⭐ MAIS ESCOLHIDO – 78% DOS DOADORES",
+    microCopyPrefix: "💫",
+    featured: true,
+    href: "https://app.umbrellapag.com/link/6bb31378-da30-4316-96ec-9db525064282",
+  },
+  {
+    label: "O DUPLO IMPACTO",
+    title: "O Duplo Impacto",
+    amount: "79,90",
+    icon: "🎁🎁",
+    subtitle: "Dois presentes completos para duas crianças.",
+    priceKey: "79.90",
+    badge: null,
+    microCopyPrefix: "✨",
+    featured: false,
+    href: "https://app.umbrellapag.com/link/d4772782-7bde-40cb-99d5-ff28913e737a",
+  },
+  {
+    label: "O PAPAI NOEL OURO",
+    title: "O Papai Noel Ouro",
+    amount: "97,00",
+    icon: "👑",
+    subtitle: "Dois presentes completos ou um presente especial de alto valor.",
+    priceKey: "97.00",
+    badge: "🏅 VIP",
+    microCopyPrefix: "🏆",
+    featured: false,
+    href: "https://app.umbrellapag.com/link/a13b5097-e589-4292-9033-6fda5716defd",
+  },
+  {
+    label: "O TRANSFORMADOR",
+    title: "O Transformador",
+    amount: "197,90",
+    icon: "🏆",
+    subtitle: "Garante o Natal completo de uma família – múltiplos presentes.",
+    priceKey: "197.90",
+    badge: "💎 ELITE",
+    microCopyPrefix: "🔥",
+    featured: false,
+    href: "https://app.umbrellapag.com/link/807fce81-9fa1-4b84-9189-5ca3ccc23abc",
+  },
+]
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedAmount, setSelectedAmount] = useState<{ display: string; value: number } | null>(null)
-
-  useEffect(() => {
-    const script = document.createElement("script")
-    script.src = "/animations.js"
-    script.async = true
-    document.body.appendChild(script)
-
-    const customBtn = document.getElementById("custom-amount-btn")
-    if (customBtn) {
-      customBtn.addEventListener("click", handleCustomAmountDonation)
-    }
-
-    return () => {
-      document.body.removeChild(script)
-      if (customBtn) {
-        customBtn.removeEventListener("click", handleCustomAmountDonation)
-      }
-    }
-  }, [])
-
-  const handleCustomAmountDonation = () => {
-    const input = document.getElementById("custom-amount") as HTMLInputElement
-    if (!input) return
-
-    const raw = input.value.replace(/\D/g, "")
-    const amount = raw ? Number(raw) / 100 : 0
-
-    if (amount < 10) {
-      const error = document.getElementById("custom-amount-error")
-      if (error) {
-        error.textContent = "Valor mínimo é R$ 10,00."
-        error.classList.remove("hidden")
-      }
-      return
-    }
-
-    if (amount > 9999) {
-      const error = document.getElementById("custom-amount-error")
-      if (error) {
-        error.textContent = "Valor máximo recomendado é R$ 9.999,00."
-        error.classList.remove("hidden")
-      }
-      return
-    }
-
-    openDonationModal({
-      display: amount.toFixed(2).replace(".", ","),
-      value: amount,
-    })
-  }
-
-  const openDonationModal = (amount: { display: string; value: number }) => {
-    setSelectedAmount(amount)
-    setIsModalOpen(true)
-  }
-
-  const donationOptions = [
-    {
-      label: "A ESPERANÇA MÍNIMA",
-      title: "A Esperança Mínima",
-      amount: "19,90",
-      icon: "🧸",
-      subtitle: "Ajuda na logística e garante a esperança de uma criança.",
-      priceKey: "19.90",
-      badge: null,
-      microCopyPrefix: "🔥",
-      featured: false,
-    },
-    {
-      label: "O PRESENTE GARANTIDO",
-      title: "O Presente Garantido",
-      amount: "29,90",
-      icon: "🎈",
-      subtitle: "Garante um presente simples, mas completo.",
-      priceKey: "29.90",
-      badge: null,
-      microCopyPrefix: "✨",
-      featured: false,
-    },
-    {
-      label: "O PACOTE MÁGICO",
-      title: "O Pacote Mágico",
-      amount: "49,90",
-      icon: "🎁",
-      subtitle: "O presente completo: brinquedo + logística + entrega garantida.",
-      priceKey: "49.90",
-      badge: "⭐ MAIS ESCOLHIDO – 78% DOS DOADORES",
-      microCopyPrefix: "💫",
-      featured: true,
-    },
-    {
-      label: "O DUPLO IMPACTO",
-      title: "O Duplo Impacto",
-      amount: "79,90",
-      icon: "🎁🎁",
-      subtitle: "Dois presentes completos para duas crianças.",
-      priceKey: "79.90",
-      badge: null,
-      microCopyPrefix: "✨",
-      featured: false,
-    },
-    {
-      label: "O PAPAI NOEL OURO",
-      title: "O Papai Noel Ouro",
-      amount: "97,00",
-      icon: "👑",
-      subtitle: "Dois presentes completos ou um presente especial de alto valor.",
-      priceKey: "97.00",
-      badge: "🏅 VIP",
-      microCopyPrefix: "🏆",
-      featured: false,
-    },
-    {
-      label: "O TRANSFORMADOR",
-      title: "O Transformador",
-      amount: "197,00",
-      icon: "🏆",
-      subtitle: "Garante o Natal completo de uma família – múltiplos presentes.",
-      priceKey: "197.00",
-      badge: "💎 ELITE",
-      microCopyPrefix: "🔥",
-      featured: false,
-    },
-  ]
-
   return (
     <>
       <SnowEffect />
@@ -229,7 +174,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-[#111827] relative aspect-video fade-in-scroll">
           <iframe
             className="w-full h-full"
-            src="https://youtu.be/x9ipplkdTak?si=gM8UWPql5Agh4kXk"
+            src="https://www.youtube.com/embed/ZJzmdhhZuLw?si=4yGEn8VyZIa-uNBU"
             title="Operação Papai Noel - VSL"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
@@ -382,12 +327,7 @@ export default function Home() {
                 badge={opt.badge}
                 featured={opt.featured}
                 microCopyPrefix={opt.microCopyPrefix}
-                onClick={() => {
-                  openDonationModal({
-                    display: opt.amount,
-                    value: Number.parseFloat(opt.priceKey),
-                  })
-                }}
+                href={opt.href}
               />
             ))}
           </div>
@@ -401,38 +341,9 @@ export default function Home() {
             <h4 className="text-[#C41E3A] text-[18px] md:text-[20px] font-extrabold flex items-center gap-2 mb-1">
               💡 Quer doar um valor diferente?
             </h4>
-            <p className="text-[#374151] text-[14px] md:text-[15px] mb-4">
-              Escolha o valor exato que você quer investir no Natal de uma criança. A partir de apenas R$ 10,00, você já
-              faz a diferença.
+            <p className="text-[#374151] text-[14px] md:text-[15px]">
+              No momento, os valores disponíveis estão logo acima. Escolha um dos valores de doação.
             </p>
-
-            <div className="space-y-3">
-              <div>
-                <label
-                  htmlFor="custom-amount"
-                  className="block text-[13px] md:text-[14px] font-medium text-[#374151] mb-1"
-                >
-                  Valor da doação
-                </label>
-                <input
-                  id="custom-amount"
-                  type="text"
-                  placeholder="Digite o valor (ex: R$ 75,00)"
-                  className="w-full h-[46px] md:h-[48px] px-3 md:px-4 rounded-lg border-2 border-[#E5E7EB] text-[15px] md:text-[16px] text-[#111827] focus:outline-none focus:border-[#C41E3A] transition-colors"
-                />
-                <p id="custom-amount-error" className="mt-1 text-[12px] text-[#DC2626] hidden">
-                  Valor mínimo é R$ 10,00 e máximo recomendado é R$ 9.999,00.
-                </p>
-              </div>
-              <button
-                id="custom-amount-btn"
-                type="button"
-                className="w-full h-[46px] md:h-[48px] rounded-lg bg-gradient-to-r from-[#DC2626] to-[#F59E0B] text-white font-bold text-[14px] md:text-[15px] tracking-wide shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 btn-cta btn-pulse custom-cta-pulse cta-slide-in"
-                disabled
-              >
-                DOAR ESTE VALOR
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -633,7 +544,33 @@ export default function Home() {
       </section>
 
       {/* SEÇÃO 13: FAQ */}
-      <FaqAccordion />
+      <div className="mt-10 bg-[#F9FAFB]">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-10">
+          <h2 className="text-[#C41E3A] text-2xl md:text-3xl font-extrabold mb-4 text-center">Perguntas Frequentes</h2>
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl px-5 py-5 md:px-6 md:py-6 shadow-md">
+              <h3 className="text-[#111827] text-[16px] md:text-[18px] font-bold mb-2">Como funciona a doação?</h3>
+              <p className="text-[#374151] text-[14px] md:text-[15px] leading-relaxed">
+                Ao escolher um dos valores acima, você será redirecionado para uma página de pagamento segura onde
+                poderá completar sua doação.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl px-5 py-5 md:px-6 md:py-6 shadow-md">
+              <h3 className="text-[#111827] text-[16px] md:text-[18px] font-bold mb-2">Quem recebe os presentes?</h3>
+              <p className="text-[#374151] text-[14px] md:text-[15px] leading-relaxed">
+                As crianças que mais precisam são selecionadas por nossa equipe de parceiros locais. Cada presente é
+                entregue com cuidado e transparência.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl px-5 py-5 md:px-6 md:py-6 shadow-md">
+              <h3 className="text-[#111827] text-[16px] md:text-[18px] font-bold mb-2">Meus dados estão seguros?</h3>
+              <p className="text-[#374151] text-[14px] md:text-[15px] leading-relaxed">
+                Sim, todos os dados são protegidos e utilizados exclusivamente para processar sua doação.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* SEÇÃO 14: EXIT-INTENT POPUP */}
       <div
@@ -807,9 +744,6 @@ export default function Home() {
         id="social-proof-popups"
         className="fixed bottom-20 left-4 z-[16000] w-[90%] max-w-[320px] md:max-w-[360px] pointer-events-none"
       ></div>
-
-      {/* CHECKOUT MODAL */}
-      <CheckoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} amount={selectedAmount} source="main" />
     </>
   )
 }

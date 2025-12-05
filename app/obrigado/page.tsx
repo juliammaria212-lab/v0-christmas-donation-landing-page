@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import CheckoutModal from "@/components/checkout-modal"
 
 export default function ThankYouPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -115,13 +114,14 @@ export default function ThankYouPage() {
                 <p className="text-[#374151] text-[14px] md:text-[15px] leading-relaxed mb-4">
                   Com mais R$ 29,90 você garante a logística e ajuda a presentear ainda mais crianças.
                 </p>
-                <button
-                  type="button"
-                  onClick={handleUpsellClick}
-                  className="w-full max-w-[280px] h-[46px] md:h-[48px] rounded-lg bg-gradient-to-r from-[#F59E0B] to-[#C41E3A] text-white font-bold text-[14px] md:text-[15px] shadow-md btn-cta btn-pulse"
+                <a
+                  href="https://app.umbrellapag.com/link/97911ebe-9cf7-4fda-b281-4c6f6fb039c4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full max-w-[280px] h-[46px] md:h-[48px] rounded-lg bg-gradient-to-r from-[#F59E0B] to-[#C41E3A] text-white font-bold text-[14px] md:text-[15px] shadow-md btn-cta btn-pulse"
                 >
                   Doar mais R$ 29,90 para logística
-                </button>
+                </a>
               </>
             )}
           </div>
@@ -181,7 +181,7 @@ export default function ThankYouPage() {
         </div>
       </main>
 
-      <CheckoutModal
+      {/* <CheckoutModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         amount={selectedAmount}
@@ -189,7 +189,7 @@ export default function ThankYouPage() {
         onPaymentConfirmed={handleUpsellPaymentConfirmed}
         skipForm={!!lastDonorData}
         preFillData={lastDonorData || undefined}
-      />
+      /> */}
     </>
   )
 }
